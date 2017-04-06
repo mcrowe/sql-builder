@@ -2,6 +2,11 @@
 
 Javascript/Typescript helpers for building basic SQL queries.
 
+## TODO
+
+- Handle SQL injection on select statements
+- Remove peer dependency on lodash
+
 ## Usage
 
 > npm install @mcrowe/sql-builder --save
