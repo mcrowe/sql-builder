@@ -32,13 +32,13 @@ test('update', () => {
 })
 
 test('upsert', () => {
-  const expected = "INSERT INTO profiles (user_id, name, age, created_at, updated_at) VALUES (1, 'Mitch', 5, now(), now()) ON CONFLICT DO UPDATE SET user_id = 1, name = 'Mitch', age = 5, created_at = now(), updated_at = now()"
+  const expected = "INSERT INTO profiles (user_id, name, age, created_at, updated_at) VALUES (1, 'Mitch', 5, now(), now()) ON CONFLICT DO UPDATE SET user_id = 1, name = 'Mitch', age = 5, updated_at = now()"
   const actual = Query.upsert('profiles', {user_id: 1, name: 'Mitch', age: 5})
   assert.equal(expected, actual)
 })
 
 test('upsert with columns', () => {
-  const expected = "INSERT INTO profiles (user_id, name, age, created_at, updated_at) VALUES (1, 'Mitch', 5, now(), now()) ON CONFLICT (name) DO UPDATE SET user_id = 1, name = 'Mitch', age = 5, created_at = now(), updated_at = now()"
+  const expected = "INSERT INTO profiles (user_id, name, age, created_at, updated_at) VALUES (1, 'Mitch', 5, now(), now()) ON CONFLICT (name) DO UPDATE SET user_id = 1, name = 'Mitch', age = 5, updated_at = now()"
   const actual = Query.upsert('profiles', {user_id: 1, name: 'Mitch', age: 5}, {constraint: ['name']})
   assert.equal(expected, actual)
 })

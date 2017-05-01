@@ -1,4 +1,4 @@
-const _ = require('lodash')
+import Util from './util'
 
 
 export interface UpsertOptions {
@@ -17,7 +17,7 @@ function escapeQuotes(str: string): string {
 
 
 function isLiteral(value: any): boolean {
-  return _.isString(value) && value.startsWith('__') && value.endsWith('__')
+  return Util.isString(value) && value.startsWith('__') && value.endsWith('__')
 }
 
 
@@ -35,56 +35,54 @@ function formatValue(value: any) {
     return stripLiteral(value)
   }
 
-  if (_.isNumber(value) || _.isBoolean(value) || _.isNull(value)) {
+  if (Util.isNumber(value) || Util.isBoolean(value) || Util.isNull(value)) {
     return JSON.stringify(value)
   }
 
-  if (_.isString(value)) {
+  if (Util.isString(value)) {
     return quotify(escapeQuotes(value))
   }
 
-  if  (_.isDate(value)) {
+  if  (Util.isDate(value)) {
     return quotify(value.toISOString())
   }
 
-  if (_.isUndefined(value)) {
+  if (Util.isUndefined(value)) {
     return 'null'
   }
 
-  if (_.isArray(value)) {
+  if (Array.isArray(value)) {
     return 'ARRAY[' + stringifyArrayValues(value) + ']'
   }
 
   throw new Error('Invalid value: "' + value + '"')
 }
 
-function stringifyArrayValues(arrayValues) {
-  const sqlFormatArray = _.map(arrayValues, function(value) {
-    return "'" + (JSON.stringify(value)) + "'"
-  })
 
-  return sqlFormatArray
+function stringifyArrayValues(arrayValues) {
+  return arrayValues.map(value =>
+    "'" + (JSON.stringify(value)) + "'"
+  )
 }
 
 
-
 function mergeInsertTimestamps(params) {
-  return _.merge(params, {created_at: NOW, updated_at: NOW})
+  return Object.assign({}, params, {created_at: NOW, updated_at: NOW})
 }
 
 
 function mergeUpdateTimestamps(params) {
-  return _.merge(params, {updated_at: NOW})
+  return Object.assign({}, params, {updated_at: NOW})
 }
 
 
 function columnsClause(fields): string {
-  return '(' + _.keys(fields).join(', ') + ')'
+  return '(' + Object.keys(fields).join(', ') + ')'
 }
 
 
 function valuesClause(fields): string {
-  return '(' + _.values(fields).map(formatValue).join(', ') + ')'
+  return '(' + Util.values(fields).map(formatValue).join(', ') + ')'
 }
 
 
@@ -104,12 +102,12 @@ function bulkInsert(table: string, rows): string {
 
 function setClause(fields): string {
   fields = mergeUpdateTimestamps(fields)
-  return 'SET ' + _.map(fields, (v, k) => `${k} = ${formatValue(v)}`).join(', ')
+  return 'SET ' + Util.mapObject(fields, (v, k) => `${k} = ${formatValue(v)}`).join(', ')
 }
 
 
 function whereClause(conditions): string {
-  return 'WHERE ' + _.map(conditions, (v, k) => `${k} = ${formatValue(v)}`).join(' AND ')
+  return 'WHERE ' + Util.mapObject(conditions, (v, k) => `${k} = ${formatValue(v)}`).join(' AND ')
 }
 
 
