@@ -1,6 +1,6 @@
 {
   "name": "@mcrowe/sql-builder",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Javascript/Typescript helpers for building basic SQL queries.",
   "author": "Mitch Crowe <code@mitchcrowe.com> (http://www.mitchcrowe.com)",
   "license": "ISC",
